@@ -85,7 +85,7 @@ export class GitHupService {
         map((data) => this.getAllPages(data)),
         concatMap((pages) => from(pages.total)),
         mergeMap((page) => this.getAllRepos(page)),
-        tap((result) => console.log('All Angular Repositories ', result)),
+        // tap((result) => console.log('All Angular Repositories ', result)),
         concatMap((data) => from(data)),
         mergeMap((data: any) => this.getAllContributors(data.name)),
         concatMap((data) => from(data)),
@@ -111,14 +111,14 @@ export class GitHupService {
                     fullName: userBio.name,
                     bio: userBio.bio,
                   })),
-                  retry(2) //api calls seems to crash on chrome, this helps with that
+                  retry(3) //api calls seems to crash on chrome, this helps with that
                 ),
-              2
+              3
             )
           )
         ),
         toArray(),
-        tap((result) => console.log('A contributors ', result)),
+        // tap((result) => console.log('A contributors ', result)),
         tap((result) =>
           this.localStorageWithExpiry('contributors', result, 8640000)
         ),

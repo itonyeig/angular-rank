@@ -67,7 +67,7 @@ export class RepoDetailsComponent implements OnInit {
           return this.repoDetails$;
         })
       )
-      .subscribe(console.log);
+      .subscribe();
   }
 
   ngOnDestroy(): void {
