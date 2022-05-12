@@ -1,0 +1,96 @@
+.page-section {
+  margin: 20px auto 0;
+  max-width: 1000px;
+  padding: 0 10px;
+  flex-grow: 1;
+}
+
+.user_profile {
+  align-items: flex-end;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.user_profile ._btn {
+  display: inline-block;
+  margin: 10px 0 0;
+}
+
+.user_profile-img {
+  border-radius: 10px;
+  display: inline-block;
+  height: 160px;
+  margin-right: 20px;
+  width: 160px;
+}
+
+.user_profile-content {
+  max-width: 300px;
+  text-align: left;
+}
+
+.user_profile-name {
+  margin-top: 10px;
+}
+
+.user_profile-bio {
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+._btn {
+  box-shadow: -1px 21px 15px -14px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s;
+  background: #e23337;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 8px 14px;
+  color: white;
+  border: 0;
+}
+
+._btn:hover {
+  background: #b63032;
+  cursor: pointer;
+}
+
+._btn:focus {
+  outline: 0;
+}
+
+._btn:active {
+  transform: scale(0.97);
+}
+
+.paragraph {
+  text-align: center;
+}
+
+.stat {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
+    rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+  align-items: center;
+  border-radius: 5px;
+  margin: 10px auto;
+  min-width: 300px;
+  color: #2a2a2a;
+  display: flex;
+  border: 1px solid #ccc;
+  transition: box-shadow 0.3s;
+}
+
+.stat:hover {
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+  cursor: pointer;
+}
+
+.stat.repo {
+  padding: 8px;
+}

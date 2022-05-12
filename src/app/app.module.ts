@@ -12,9 +12,11 @@ import { AppComponent } from './app.component';
 import { AngularContributorsComponent } from './angular-contributors/angular-contributors.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GithubInterceptor } from './shared/github.interceptor';
+import { UserDetailsComponent } from './user-details/user-details.component';
+import { HeaderComponent } from './shared/header/header.component';
 
 @NgModule({
-  declarations: [AppComponent, AngularContributorsComponent],
+  declarations: [AppComponent, AngularContributorsComponent, UserDetailsComponent, HeaderComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

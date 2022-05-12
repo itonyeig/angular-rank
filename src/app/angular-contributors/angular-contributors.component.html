@@ -44,7 +44,9 @@
               </a>
             </td> -->
             <td>
-              {{ contributor.name || "Anonymous" }}
+              <a [routerLink]="['/user', contributor.id]">{{
+                contributor.name || "Anonymous"
+              }}</a>
             </td>
             <td>{{ contributor.contributions }}</td>
             <td>{{ contributor.followers }}</td>

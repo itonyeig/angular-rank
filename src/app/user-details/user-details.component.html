@@ -1,0 +1,22 @@
+<section *ngIf="contributor" class="page-section">
+  <div class="user_profile">
+    <img class="user_profile-img" [src]="contributor.avatar_url" alt="" />
+    <div class="user_profile-content">
+      <p class="user_profile-name">
+        <strong>{{ contributor.fullName }}</strong>
+      </p>
+      <p class="user_profile-bio">{{ contributor.bio }}</p>
+      <a routerLink="/contributors">
+        <button class="_btn">View All Contributors</button>
+      </a>
+    </div>
+  </div>
+  <p class="paragraph">
+    {{ contributor.name }} has contributed to the following repos:
+  </p>
+  <ul class="pb-3">
+    <li class="stat repo" *ngFor="let repo of contributor.repoNames">
+      {{ repo }}
+    </li>
+  </ul>
+</section>

@@ -24,17 +24,6 @@ import {
 export class GitHupService {
   constructor(private http: HttpClient) {}
 
-  getContributors(pageNumber?: string): Observable<Contributor[]> {
-    return this.http
-      .get(`${environment.githupAPI}?page=${pageNumber}&per_page=30`, {
-        observe: 'response',
-      })
-      .pipe(
-        tap((data) => console.log('server response ', data)),
-        map((data) => data.body as Contributor[])
-      );
-  }
-
   generateTotal(link: string, data?): number {
     // console.log(link.split(';'));
 
@@ -76,10 +65,10 @@ export class GitHupService {
   }
 
   angularRankData() {
-    // const contributors = JSON.parse(localStorage.getItem('contributors'));
-    // if (contributors) {
-    //   return of(contributors);
-    // }
+    const contributors = JSON.parse(localStorage.getItem('contributors'));
+    if (contributors) {
+      return of(contributors);
+    }
 
     return this.http
       .get(`https://api.github.com/orgs/angular/repos?page=1&per_page=100`, {
@@ -93,7 +82,7 @@ export class GitHupService {
         concatMap((pages) => from(pages.total)),
         // tap((result) => console.log('Page Numbers ', result)),
         mergeMap((page) => this.getAllRepos(page)),
-        // tap((result) => console.log('All Angular Repositories ', result)),
+        tap((result) => console.log('All Angular Repositories ', result)),
         // @ts-expect-error
         concatMap((data) => from(data)),
         mergeMap((data) => this.getAllContributors(data.name)),
@@ -117,7 +106,7 @@ export class GitHupService {
               // console.log('value ', curr);
               // debugger;
               // @ts-expect-error
-              acc.repoNames.push(curr.repoName);
+              acc.repoNames = [...acc.repoNames, curr.repoName];
               // @ts-expect-error
               acc.contributions = acc.contributions + curr.contributions;
               // acc.repoNames.push(curr.repoName);
@@ -151,9 +140,9 @@ export class GitHupService {
         ),
         toArray(),
         tap((result) => console.log('A contributors ', result)),
-        // tap((result) =>
-        //   localStorage.setItem('contributors', JSON.stringify(result))
-        // ),
+        tap((result) =>
+          localStorage.setItem('contributors', JSON.stringify(result))
+        ),
 
         catchError((error) => {
           console.log(error);

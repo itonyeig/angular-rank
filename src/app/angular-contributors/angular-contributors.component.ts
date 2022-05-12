@@ -3,7 +3,6 @@ import { merge, Observable, Subscription } from 'rxjs';
 import { GitHupService } from '../shared/git-hup.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { map, startWith, switchMap, tap } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-angular-contributors',
@@ -12,7 +11,6 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class AngularContributorsComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  dataSource: MatTableDataSource<any>;
 
   contributors$: Observable<any>;
   imageWidth = 50;
@@ -25,14 +23,14 @@ export class AngularContributorsComponent implements OnInit {
   constructor(private gitHubService: GitHupService) {}
 
   ngOnInit(): void {
-    // this.gitHubService.angularRankData().subscribe((data) => {
-    //   // setTimeout is needed to avoid change detection error
-    //   setTimeout(() => {
-    //     this.resultLength = data.length;
-    //   }, 0);
-    //   this.data = data;
-    //   this.contributors = this.data.slice(0, this.pageSize);
-    // });
+    this.gitHubService.angularRankData().subscribe((data) => {
+      // setTimeout is needed to avoid change detection error
+      setTimeout(() => {
+        this.resultLength = data.length;
+      }, 0);
+      this.data = data;
+      this.contributors = this.data.slice(0, this.pageSize);
+    });
   }
 
   // client side pagination
