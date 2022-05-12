@@ -6,6 +6,7 @@ import {
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,15 +15,25 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GithubInterceptor } from './shared/github.interceptor';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { HeaderComponent } from './shared/header/header.component';
+import { RepoDetailsComponent } from './repo-details/repo-details.component';
+import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
 
 @NgModule({
-  declarations: [AppComponent, AngularContributorsComponent, UserDetailsComponent, HeaderComponent],
+  declarations: [
+    AppComponent,
+    AngularContributorsComponent,
+    UserDetailsComponent,
+    HeaderComponent,
+    RepoDetailsComponent,
+    LoadingSpinnerComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     // { provide: HTTP_INTERCEPTORS, useClass: GithubInterceptor, multi: true },

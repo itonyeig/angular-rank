@@ -19,6 +19,7 @@ export class UserGuard implements CanActivate {
     state: RouterStateSnapshot
   ): | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const id = +route.paramMap.get('id');
+    
     const data = JSON.parse(localStorage.getItem('contributors'));
     if (isNaN(id) || id < 1) {
       alert('Invalid route parameter');

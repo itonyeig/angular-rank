@@ -1,7 +1,7 @@
-<div class="card">
+<div class="card mt-3">
   <div class="card-header">Contributors</div>
-
-  <div class="card-body">
+  <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+  <div class="card-body" #scrollTarget>
     <div class="container">
       <div class="row">
         <div class="col-md-2">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="table-responsive" #scrollTarget>
+    <div class="table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>
@@ -38,14 +38,9 @@
                 [style.margin.px]="imageMargin"
               />
             </td>
-            <!-- <td>
-              <a [routerLink]="['/products', product.productId]">
-                {{ contributor.login }}
-              </a>
-            </td> -->
             <td>
               <a [routerLink]="['/user', contributor.id]">{{
-                contributor.name || "Anonymous"
+                contributor.name
               }}</a>
             </td>
             <td>{{ contributor.contributions }}</td>

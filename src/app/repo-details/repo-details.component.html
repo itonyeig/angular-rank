@@ -1,0 +1,53 @@
+<ng-container *ngIf="resultLength$ | async">
+  <ng-container *ngIf="repoDetails$ | async as contributors">
+    <div class="card mt-3">
+      <div class="card-header" style="text-align: center">
+        <h5 class="pt-2">{{ repoName }}</h5>
+      </div>
+      <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+      <div class="card-body">
+        <div class="table-responsive table table-hover mt-0">
+          <table class="table mt-0">
+            <thead>
+              <tr>
+                <th>Profile Image</th>
+                <th>User Name</th>
+                <th>Contributions</th>
+                <th>Side Admin</th>
+                <th>Account Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let contributor of contributors; trackBy: trackById">
+                <td>
+                  <img
+                    [src]="contributor.avatar_url"
+                    [title]="contributor.login"
+                    [style.width.px]="imageWidth"
+                    [style.margin.px]="imageMargin"
+                  />
+                </td>
+                <!-- <td>
+              <a [routerLink]="['/products', product.productId]">
+                {{ contributor.login }}
+              </a>
+            </td> -->
+                <td>
+                  <a [routerLink]="['/user', contributor.id]">{{
+                    contributor.login || "Anonymous"
+                  }}</a>
+                </td>
+                <td>{{ contributor.contributions }}</td>
+                <td>{{ contributor.site_admin }}</td>
+                <td>{{ contributor.type }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+
+<mat-paginator [length]="resultLength" [pageSize]="30" showFirstLastButtons>
+</mat-paginator>

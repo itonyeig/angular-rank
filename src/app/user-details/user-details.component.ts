@@ -17,13 +17,14 @@ export class UserDetailsComponent implements OnInit {
     this.sub = this.route.paramMap.subscribe((param) => {
       const id = +param.get('id');
       console.log(id);
-
       this.contributor = this.data.find((contributor) => contributor.id === id);
-      this.contributor.repoNames = [
-        ...this.contributor.repoNames,
-        this.contributor.repoName,
-      ];
-      console.log(this.contributor);
+      if (this.contributor) {
+        this.contributor.repoNames = [
+          ...this.contributor.repoNames,
+          this.contributor.repoName,
+        ];
+      }
+
       if (!this.contributor) {
         this.router.navigate(['/contributors']);
       }
@@ -34,5 +35,9 @@ export class UserDetailsComponent implements OnInit {
     if (this.sub) {
       this.sub.unsubscribe();
     }
+  }
+
+  routeToRepo(name: string) {
+    this.router.navigate(['/repo', name]);
   }
 }

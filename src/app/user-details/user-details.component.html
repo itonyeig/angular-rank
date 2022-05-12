@@ -15,7 +15,11 @@
     {{ contributor.name }} has contributed to the following repos:
   </p>
   <ul class="pb-3">
-    <li class="stat repo" *ngFor="let repo of contributor.repoNames">
+    <li
+      (click)="routeToRepo(repo)"
+      class="stat repo"
+      *ngFor="let repo of contributor.repoNames"
+    >
       {{ repo }}
     </li>
   </ul>

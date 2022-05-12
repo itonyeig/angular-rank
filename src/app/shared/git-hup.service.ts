@@ -13,7 +13,6 @@ import {
   toArray,
   groupBy,
   reduce,
-  throttle,
   retry,
   delay,
 } from 'rxjs/operators';
@@ -22,6 +21,7 @@ import {
   providedIn: 'root',
 })
 export class GitHupService {
+  totalLength: number;
   constructor(private http: HttpClient) {}
 
   generateTotal(link: string, data?): number {
@@ -40,17 +40,21 @@ export class GitHupService {
     }
   }
 
-  getTotalCount(): Observable<number> {
+  getTotalCount(repoName): Observable<number> {
     return this.http
-      .get(`${environment.githupAPI}?page=1&per_page=1`, {
-        observe: 'response',
-        headers: new HttpHeaders({
-          Authorization: 'token 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',
-        }),
-      })
+      .get(
+        `https://api.github.com/repos/angular/${repoName}/contributors?page=1&per_page=1`,
+        {
+          observe: 'response',
+          headers: new HttpHeaders({
+            Authorization: 'token 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',
+          }),
+        }
+      )
       .pipe(
         map((data) => {
           const totalCount = this.generateTotal(data.headers.get('LINK'));
+          this.totalLength = totalCount;
           return totalCount;
         })
       );
@@ -196,6 +200,31 @@ export class GitHupService {
       })
       // tap((data) => console.log('repo and contributors ', data))
     );
+  }
+
+  getRepoPageDetails(repoName: string, pageNumber?: string): Observable<any[]> {
+    // );
+    if (pageNumber) {
+      return this.http
+        .get<any[]>(
+          `https://api.github.com/repos/angular/${repoName}/contributors?page=${pageNumber}&per_page=30`,
+          {
+            headers: new HttpHeaders({
+              Authorization: 'token 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',
+            }),
+          }
+        ) // @ts-expect-error
+        .pipe(skipWhile((data) => data.length === 0));
+    } else {
+      return this.http.get<any[]>(
+        `https://api.github.com/repos/angular/${repoName}/contributors?page=1&per_page=30`,
+        {
+          headers: new HttpHeaders({
+            Authorization: 'token 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',
+          }),
+        }
+      );
+    }
   }
 
   getAllContributorPages(name) {

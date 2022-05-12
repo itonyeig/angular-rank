@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { merge, Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GitHupService } from '../shared/git-hup.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { map, startWith, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-angular-contributors',
@@ -19,18 +18,27 @@ export class AngularContributorsComponent implements OnInit {
   pageSize: number = 30;
   data;
   contributors;
+  isLoading = true;
 
   constructor(private gitHubService: GitHupService) {}
 
   ngOnInit(): void {
-    this.gitHubService.angularRankData().subscribe((data) => {
-      // setTimeout is needed to avoid change detection error
-      setTimeout(() => {
-        this.resultLength = data.length;
-      }, 0);
-      this.data = data;
-      this.contributors = this.data.slice(0, this.pageSize);
-    });
+    this.gitHubService.angularRankData().subscribe(
+      (data) => {
+        this.isLoading = false;
+        // setTimeout is needed here to avoid change detection error
+        setTimeout(() => {
+          this.resultLength = data.length;
+        }, 0);
+        this.data = data;
+        this.contributors = this.data.slice(0, this.pageSize);
+      },
+      (error) => {
+        this.isLoading = false;
+        console.log('error');
+        alert('error');
+      }
+    );
   }
 
   // client side pagination
