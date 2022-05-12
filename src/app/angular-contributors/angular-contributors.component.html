@@ -1,0 +1,66 @@
+<div class="card">
+  <div class="card-header">Contributors</div>
+
+  <div class="card-body">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <select (change)="onSelect($event.target.value)" class="form-control">
+            <option value="0">- Sort By -</option>
+            <option value="contributions">Contributions</option>
+            <option value="followers">Followers</option>
+            <option value="gists">Gists</option>
+            <option value="public_repos">Public Repos</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive" #scrollTarget>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Profile Image</th>
+            <th>User Name</th>
+            <th>Contributions</th>
+            <th>Followers</th>
+            <th>Gists</th>
+            <th>Public Repos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contributor of contributors; trackBy: trackById">
+            <td>
+              <img
+                [src]="contributor.avatar_url"
+                [title]="contributor.login"
+                [style.width.px]="imageWidth"
+                [style.margin.px]="imageMargin"
+              />
+            </td>
+            <!-- <td>
+              <a [routerLink]="['/products', product.productId]">
+                {{ contributor.login }}
+              </a>
+            </td> -->
+            <td>
+              {{ contributor.name || "Anonymous" }}
+            </td>
+            <td>{{ contributor.contributions }}</td>
+            <td>{{ contributor.followers }}</td>
+            <td>{{ contributor.gists }}</td>
+            <td>{{ contributor.public_repos }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <mat-paginator
+      [length]="resultLength"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[15, 30, 50, 100]"
+      showFirstLastButtons
+      (page)="onPageChange($event, scrollTarget)"
+    >
+    </mat-paginator>
+  </div>
+</div>
