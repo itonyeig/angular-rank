@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GitHupService } from '../shared/git-hup.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Contributor } from '../shared/interface/contributors';
 
 @Component({
   selector: 'app-angular-contributors',
@@ -17,14 +18,14 @@ export class AngularContributorsComponent implements OnInit {
   resultLength: number = 0;
   pageSize: number = 30;
   data;
-  contributors;
+  contributors: Contributor[];
   isLoading = true;
 
   constructor(private gitHubService: GitHupService) {}
 
   ngOnInit(): void {
     this.gitHubService.angularRankData().subscribe(
-      (data) => {
+      (data: Contributor[]) => {
         this.isLoading = false;
         // setTimeout is needed here to avoid change detection error
         setTimeout(() => {
@@ -35,8 +36,8 @@ export class AngularContributorsComponent implements OnInit {
       },
       (error) => {
         this.isLoading = false;
-        console.log('error');
-        alert('error');
+        console.log(error);
+        alert(error);
       }
     );
   }
@@ -58,7 +59,7 @@ export class AngularContributorsComponent implements OnInit {
     return contributor.id;
   }
 
-  onSelect(event) {
+  onSelect(event: string) {
     if (event !== '0') {
       this.paginator.pageIndex = 0;
       this.data = this.data.sort(function (a, b) {

@@ -12,7 +12,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AngularContributorsComponent } from './angular-contributors/angular-contributors.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { GithubInterceptor } from './shared/github.interceptor';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { RepoDetailsComponent } from './repo-details/repo-details.component';

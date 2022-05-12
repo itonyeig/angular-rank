@@ -1,16 +1,24 @@
 export interface Contributor {
-  id: number;
-  login: string;
   avatar_url: string;
-  followers_url: string;
-  html_url: string;
-  user_api_url: string;
-  repos_url: string;
+  bio: string;
   contributions: number;
-  email?: string;
+  followers: number;
+  fullName: string;
+  gists: number;
+  id: number;
+  name: string;
+  public_repos: number;
+  repoName: string;
+  repoNames: string[];
+  userUrl: string;
 }
 
 export interface ContributorsResponse {
   totalPages: number | null;
   contributors: Contributor[];
+}
+
+export interface CacheStrorage {
+  value: Contributor[];
+  expiry: number;
 }

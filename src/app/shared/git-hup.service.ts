@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EMPTY, from, Observable, of } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Contributor } from './interface/contributors';
+import { Contributor, CacheStrorage } from './interface/contributors';
 import {
   catchError,
   tap,
@@ -69,7 +68,8 @@ export class GitHupService {
   }
 
   angularRankData() {
-    const contributors = JSON.parse(localStorage.getItem('contributors'));
+    // const contributors = JSON.parse(localStorage.getItem('contributors'));
+    const contributors = this.getWithExpiry('contributors');
     if (contributors) {
       return of(contributors);
     }
@@ -84,56 +84,31 @@ export class GitHupService {
       .pipe(
         map((data) => this.getAllPages(data)),
         concatMap((pages) => from(pages.total)),
-        // tap((result) => console.log('Page Numbers ', result)),
         mergeMap((page) => this.getAllRepos(page)),
         tap((result) => console.log('All Angular Repositories ', result)),
-        // @ts-expect-error
         concatMap((data) => from(data)),
-        mergeMap((data) => this.getAllContributors(data.name)),
-        // COMMENT FROM HERE
+        mergeMap((data: any) => this.getAllContributors(data.name)),
         concatMap((data) => from(data)),
-        // @ts-expect-error
-        groupBy((data) => data.name),
-        // mergeMap((group) => group.pipe(toArray())),
-        // delay(1000),
+        groupBy((data: any) => data.name),
         mergeMap((group) =>
           group.pipe(
-            // scan((acc, cur) => {
-            //   acc.repoNames.push(cur.repoName);
-            //   return acc;
-            // }),
-            // tap((data) =>
-            //   localStorage.setItem('dataWithRepoNames ', JSON.stringify(data))
-            // ),
             reduce((acc, curr) => {
-              // console.log('accumulator ', acc);
-              // console.log('value ', curr);
-              // debugger;
-              // @ts-expect-error
               acc.repoNames = [...acc.repoNames, curr.repoName];
-              // @ts-expect-error
+
               acc.contributions = acc.contributions + curr.contributions;
-              // acc.repoNames.push(curr.repoName);
               return acc;
             }),
             // get bio
             mergeMap(
               (user) =>
-                // @ts-expect-error
                 this.getUserBio(user.userUrl).pipe(
                   delay(2000),
-                  map((userBio) => ({
-                    // @ts-expect-error
+                  map((userBio: any) => ({
                     ...user,
-                    // @ts-expect-error
                     gists: userBio.public_gists,
-                    // @ts-expect-error
                     followers: userBio.followers,
-                    // @ts-expect-error
                     public_repos: userBio.public_repos,
-                    // @ts-expect-error
                     fullName: userBio.name,
-                    // @ts-expect-error
                     bio: userBio.bio,
                   })),
                   retry(2) //api calls seems to crash on chrome, this helps with that
@@ -145,7 +120,7 @@ export class GitHupService {
         toArray(),
         tap((result) => console.log('A contributors ', result)),
         tap((result) =>
-          localStorage.setItem('contributors', JSON.stringify(result))
+          this.localStorageWithExpiry('contributors', result, 8640000)
         ),
 
         catchError((error) => {
@@ -155,8 +130,8 @@ export class GitHupService {
       );
   }
 
-  getAllRepos(page) {
-    return this.http.get(
+  getAllRepos(page): Observable<number[]> {
+    return this.http.get<number[]>(
       `https://api.github.com/orgs/angular/repos?page=${page}&per_page=100`,
       {
         headers: new HttpHeaders({
@@ -166,10 +141,9 @@ export class GitHupService {
     );
   }
 
-  getAllContributors(repoName) {
+  getAllContributors(repoName): Observable<any> {
     return this.getAllContributorPages(repoName).pipe(
       concatMap((pages) => from(pages.total)),
-      // tap((data) => console.log('contributors pages ', data))
       mergeMap((pageNumber) =>
         this.http
           .get(
@@ -179,11 +153,10 @@ export class GitHupService {
                 Authorization: 'token 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',
               }),
             }
-          ) // @ts-expect-error
-          .pipe(skipWhile((data) => data.length === 0))
+          )
+          .pipe(skipWhile((data: any[]) => data.length === 0))
       ),
       map((data) =>
-        // @ts-expect-error
         data.map((contributor) => ({
           id: contributor.id,
           name: contributor.login,
@@ -213,7 +186,7 @@ export class GitHupService {
               Authorization: 'token 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',
             }),
           }
-        ) // @ts-expect-error
+        )
         .pipe(skipWhile((data) => data.length === 0));
     } else {
       return this.http.get<any[]>(
@@ -239,18 +212,61 @@ export class GitHupService {
   }
 
   getAllPages(data) {
-    // console.log(data.headers.get('LINK'));
-
     const totalCount = this.generateTotal(data.headers.get('LINK'), data);
     const totalPagesArray = [];
 
     for (let index = 1; index <= totalCount; index++) {
       totalPagesArray.push(index);
     }
-    // console.log('totalCountArray', totalPagesArray);
-    // firstPageResult.push(data.body); // come back to this
     return {
       total: totalPagesArray,
     };
+  }
+
+  /**
+   * Due to the requirnments of sorting all contributors, client needs
+   * all the data at once as server does provide for sorting
+   * (at least the endpoint i found does not cater for thos)
+   * To combat this, hundreds of api calls need to placed at once
+   * This is a very resources intensive task and for that reason, the data received will be cached to the brower
+   * with an expiration date
+   * @param key localStorage key
+   * @param value item to be cached
+   * @param ttl time for the item to live
+   */
+  localStorageWithExpiry(key: string, value: Contributor[], ttl: number) {
+    const now = new Date();
+    // `item` is an object which contains the value t0 be cached
+    // as well as the time when it's supposed to expire
+    const item = {
+      value: value,
+      expiry: now.getTime() + ttl,
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  }
+
+  /**
+   * Here we are expiring the item “lazily” - which is to say we check the expiry
+   * condition only when we want to retrieve it from storage
+   * @param key localStorage key
+   * @returns cached item if it is beining retrieved with the time to live range
+   */
+  getWithExpiry(key: string) {
+    const itemStr: string = localStorage.getItem(key);
+    // if the item doesn't exist, return null
+    if (!itemStr) {
+      return null;
+    }
+    const item: CacheStrorage = JSON.parse(itemStr);
+    const now = new Date();
+
+    // compare the expiry time of the item with the current time
+    if (now.getTime() > item.expiry) {
+      // If the item is expired, delete the item from storage
+      // and return null
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
   }
 }
