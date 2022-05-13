@@ -2,7 +2,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, EMPTY, merge, Observable, Subscription } from 'rxjs';
 import { GitHupService } from '../shared/git-hup.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { catchError, map, startWith, switchMap, tap } from 'rxjs/operators';
+import {
+  bufferCount,
+  catchError,
+  map,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -67,7 +74,7 @@ export class RepoDetailsComponent implements OnInit {
           return this.repoDetails$;
         })
       )
-      .subscribe();
+      .subscribe(bufferCount(6));
   }
 
   ngOnDestroy(): void {
