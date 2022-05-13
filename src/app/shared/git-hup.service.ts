@@ -125,6 +125,9 @@ export class GitHupService {
 
         catchError((error) => {
           console.log(error);
+          if (error.error.message.includes('API rate limit exceeded')) {
+            alert('API rate limit exceeded try again in 1');
+          }
           return EMPTY;
         })
       );
