@@ -46,7 +46,7 @@ export class GitHupService {
         {
           observe: 'response',
           headers: new HttpHeaders({
-            Authorization: 'token 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',
+            Authorization: '', // git token goes here
           }),
         }
       )
@@ -62,7 +62,7 @@ export class GitHupService {
   getUserBio(url) {
     return this.http.get(url, {
       headers: new HttpHeaders({
-        Authorization: 'token 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',
+        Authorization: '', // git token goes here
       }),
     });
   }
@@ -78,7 +78,7 @@ export class GitHupService {
       .get(`https://api.github.com/orgs/angular/repos?page=1&per_page=100`, {
         observe: 'response',
         headers: new HttpHeaders({
-          Authorization: 'token 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',
+          Authorization: '', // git token goes here
         }),
       })
       .pipe(
@@ -120,12 +120,15 @@ export class GitHupService {
         toArray(),
         // tap((result) => console.log('A contributors ', result)),
         tap((result) =>
-          this.localStorageWithExpiry('contributors', result, 8640000)
+          this.localStorageWithExpiry('contributors', result, 864000000)
         ),
 
         catchError((error) => {
           console.log(error);
-          return EMPTY;
+          if (error.error.message.includes('API rate limit exceeded')) {
+            alert('API rate limit exceeded try again in 1 hour');
+          }
+          return of([]);
         })
       );
   }
@@ -135,7 +138,7 @@ export class GitHupService {
       `https://api.github.com/orgs/angular/repos?page=${page}&per_page=100`,
       {
         headers: new HttpHeaders({
-          Authorization: 'token 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',
+          Authorization: 'token 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', // git token goes here
         }),
       }
     );
@@ -150,7 +153,7 @@ export class GitHupService {
             `https://api.github.com/repos/angular/${repoName}/contributors?page=${pageNumber}&per_page=100`,
             {
               headers: new HttpHeaders({
-                Authorization: 'token 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',
+                Authorization: 'token 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', // git token goes here
               }),
             }
           )
@@ -183,7 +186,7 @@ export class GitHupService {
           `https://api.github.com/repos/angular/${repoName}/contributors?page=${pageNumber}&per_page=30`,
           {
             headers: new HttpHeaders({
-              Authorization: 'token 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',
+              Authorization: 'token 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', // git token goes here
             }),
           }
         )
@@ -193,7 +196,7 @@ export class GitHupService {
         `https://api.github.com/repos/angular/${repoName}/contributors?page=1&per_page=30`,
         {
           headers: new HttpHeaders({
-            Authorization: 'token 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',
+            Authorization: 'token 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', // git token goes here
           }),
         }
       );
@@ -205,7 +208,7 @@ export class GitHupService {
       .get(`https://api.github.com/repos/angular/${name}/contributors`, {
         observe: 'response',
         headers: new HttpHeaders({
-          Authorization: 'token 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',
+          Authorization: 'token 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', // git token goes here
         }),
       })
       .pipe(map((data) => this.getAllPages(data)));

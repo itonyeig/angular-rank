@@ -37,7 +37,7 @@ export class AngularContributorsComponent implements OnInit {
       (error) => {
         this.isLoading = false;
         console.log(error);
-        alert(error);
+        // alert(error);
       }
     );
   }
