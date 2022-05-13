@@ -74,7 +74,7 @@ export class RepoDetailsComponent implements OnInit {
           return this.repoDetails$;
         })
       )
-      .subscribe(bufferCount(6));
+      .subscribe();
   }
 
   ngOnDestroy(): void {
